@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Prefix-Suffix With Html5,CSS3 & JavaScript</title>
+    <style>
+        .mybutton {
+            border-style: solid;
+            height: 100px;
+            width: 100px;
+            background-color: cyan;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 100px;
+            margin-left: 5px;
+            font-size: 30px;
+            color: blueviolet;
+            border-width: 1px;
+            border-radius: 10px;
+        }
+
+        #targ {
+            background-color: white;
+            margin-left: 0px;
+            text-align: right;
+            border-style: dashed;
+
+        }
+
+        #suffix {
+            margin-left: 0px;
+            text-align: left;
+
+        }
+
+        .row {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            font-family: sans-serif;
+        }
+
+
+        #instruct {
+            padding-bottom: 2px;
+            padding-top: 2px;
+            padding-left: 7px;
+            padding-right: 7px;
+            border-width: 1px;
+            border-style: solid;
+            font-size: 10px;
+            width: 510px;
+            display: block;
+            margin: 0 auto;
+            font-family: sans-serif;
+        }
+
+        .prefix {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .suffix {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .messages {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #score {
+            width: 175px;
+            height: 75px;
+            border-style: solid;
+            border-color: black;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 75px;
+            font-family: sans-serif;
+            font-size: 40px;
+            border-width: 1.5px;
+        }
+
+        #progress {
+            width: 365px;
+            height: 75px;
+            border-style: solid;
+            border-color: black;
+            margin-right: 10px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 75px;
+            font-family: sans-serif;
+            font-size: 40px;
+            border-width: 1.5px;
+        }
+
+        .game {
+            width: 280px;
+            height: 50px;
+        }
+
+        .header {
+            height: 75px;
+            background-color: beige;
+            text-align: left;
+            color: cadetblue;
+            vertical-align: middle;
+            line-height: 75px;
+            font-size: 40px;
+            font-family: sans-serif;
+            margin-bottom: 10px;
+            padding-left: 15px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #ins_h {
+            margin-bottom: 1px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .game {
+            font-family: sans-serif;
+            font-size: 20px;
+        }
+
+        p {
+            font-family: sans-serif;
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+    <header class="header">
+        Prefix Suffix Game
+    </header>
+    <div class="strstop">
+        <div class="row">
+            <button class="game" id="start" onclick=start()> START</button>
+
+            <button class="game" id="reset" onclick=reset()> RESET</button>
+        </div>
+
+    </div>
+    <div class="messages">
+        <div class="row">
+
+            <div id="progress">
+            </div>
+            <div id="score">
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="suffix">
+        <div id="suffix_row" class="row">
+            <div class="mybutton" id="targ" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+            <div class="mybutton" id="suffix"></div>
+        </div>
+    </div>
+
+
+    <div class="prefix">
+        <div id="prefix_row" class="row">
+            <div class="mybutton" id="first" ondragstart="drag(event)"> </div>
+            <div class="mybutton" id="second" ondragstart="drag(event)"> </div>
+            <div class="mybutton" id="third" ondragstart="drag(event)"> </div>
+            <div class="mybutton" id="fourth" ondragstart="drag(event)"> </div>
+            <div class="mybutton" id="fifth" ondragstart="drag(event)"> </div>
+        </div>
+    </div>
+
+    <div class="instruction">
+        <div id="instruct">
+            <p id="ins_h"> Instructions: </p>
+            <p> 1. Click on 'start button' to start the game. </p>
+            <p> 2. On start five prefixes and one suffix will appear on the boxes above. </p>
+            <p> 3. Drag and drop the prefixes next to suffix to complete the word. Ten points will be awarded for every correct word and five points will be deducted on every wrong word.</p>
+            <p> 4. After every three attempts a new set of prefixes and suffix will appear on the boxes.</p>
+            <p> 5. Click on reset to reset the game. </p>
+        </div>
+    </div>
+
+    <h1 id="num_att">
+        <h1>
+
+
+            <script>
+                score = 0;
+
+                function iscorrect(x, callback) {
+                    var obj;
+
+                    var xhttpnew = new XMLHttpRequest();
+
+                    xhttpnew.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            console.log(this.responseText)
+                            var audio = new Audio(this.responseText);
+                            audio.play();
+                            callback(this.responseText);
+                        }
+                    }
+
+                    xhttpnew.open("Post", "http://127.0.0.1:5000/iscorrect/" + x + "/", true);
+                    xhttpnew.send();
+                }
+
+                function mycall(resp) {
+                    if (resp == "/static/right.mp3") {
+                        score = score + 10;
+                        document.getElementById("progress").innerHTML = "That's correct!";
+                    }
+                    if (resp == "/static/wrong.mp3") {
+                        score = score - 5;
+                        document.getElementById("progress").innerHTML = "Try again!";
+                    }
+                }
+
+
+                function reset() {
+                    document.getElementById("start").disabled = false;
+                    mylist = ["first", "second", "third", "fourth", "fifth"];
+                    for (i = 0; i < 5; i++) {
+                        prefix_div = document.getElementById(mylist[i])
+                        prefix_div.innerHTML = "";
+                        prefix_div.setAttribute('draggable', false);
+                        prefix_div.style.backgroundColor = "cyan";
+                    }
+                    document.getElementById("suffix").innerHTML = "";
+                    document.getElementById("score").innerHTML = "";
+                    document.getElementById("progress").innerHTML = "";
+                    document.getElementById("targ").innerHTML = "";
+                    document.getElementById("suffix").innerHTML = "";
+                    document.getElementById("suffix").style.borderLeft = "solid";
+                    document.getElementById("targ").style.borderRight = "dashed";
+                    document.getElementById("targ").style.borderWidth = "1px";
+                    document.getElementById("suffix").style.borderWidth = "1px";
+                    score = 0;
+                    num_trial = 0;
+                    document.getElementById("num_att").innerHTML = "Number of attempts: " + num_trial;
+                }
+
+                var num_trial = 0;
+
+
+                function allowDrop(ev) {
+                    ev.preventDefault();
+
+                }
+
+                function drag(ev) {
+                    ev.dataTransfer.setData("text", ev.target.id);
+                }
+
+                function drop(ev) {
+                    var presentscore;
+                    ev.preventDefault();
+                    var data = ev.dataTransfer.getData("text");
+                    ev.target.innerHTML = document.getElementById(data).innerHTML;
+                    ev.target.style.backgroundColor = "cyan";
+                    ev.target.style.borderRight = "none";
+                    document.getElementById("suffix").style.borderLeft = "none";
+                    num_trial = num_trial + 1;
+                    source = document.getElementById(data)
+                    word = source.innerHTML + document.getElementById("suffix").innerHTML;
+                    source.setAttribute('draggable', false);
+                    source.style.backgroundColor = "#EBEBE4";
+                    source.style.borderColor = "gray";
+                    iscorrect(word, mycall);
+                    setTimeout(function() {
+                        console.log("updated score " + score);
+                        document.getElementById("score").innerHTML = "Score: " + score;
+                    }, 1000);
+
+
+                    document.getElementById("num_att").innerHTML = "Number of attempts: " + num_trial;
+                    if (num_trial == 3) {
+                        num_trial = 0;
+                         mylist = ["first", "second", "third", "fourth", "fifth"];
+                        for (i = 0; i < 5; i++) {
+                            prefix_div = document.getElementById(mylist[i])
+                           
+                            prefix_div.setAttribute('draggable', false);                           
+                        }
+                        $("#prefix_row").delay(1000).fadeOut(2000);
+                        $("#suffix_row").delay(1000).fadeOut(2000);
+                        setTimeout(function() {
+                                document.getElementById("targ").innerHTML = "";
+                                document.getElementById("targ").style.borderStyle = "dashed";
+                                document.getElementById("targ").style.borderWidth = "1px";
+                                document.getElementById("targ").style.backgroundColor = "white";
+                                document.getElementById("targ").style.borderColor = "blueviolet";
+                                document.getElementById("suffix").style.borderLeft = "solid";
+                                document.getElementById("suffix").style.borderWidth = "1px";
+                                start();
+                        }, 3000);
+                        $("#prefix_row").fadeIn(2000);
+                        $("#suffix_row").fadeIn(2000);
+
+                    }
+                }
+
+            </script>
+
+            <script>
+                function start() {
+                    document.getElementById("start").disabled = true;
+                    num_trial = 0
+                    document.getElementById("progress").innerHTML = "Start!";
+                    var obj;
+                    var xhttpnew = new XMLHttpRequest();
+                    xhttpnew.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            obj = JSON.parse(this.responseText);
+                            console.log(obj);
+                        }
+                        mylist = ["first", "second", "third", "fourth", "fifth"];
+                        for (i = 0; i < 5; i++) {
+                            prefix_div = document.getElementById(mylist[i])
+                            prefix_div.innerHTML = obj["prefix"][i];
+                            prefix_div.setAttribute('draggable', true);
+                            prefix_div.style.backgroundColor = "cyan";
+                            prefix_div.style.borderColor = "blueviolet";
+                        }
+                        document.getElementById("suffix").innerHTML = obj["base"];
+
+
+
+
+                    };
+                    xhttpnew.open("Post", "http://127.0.0.1:5000/draw/prefix/", true);
+                    xhttpnew.send();
+                }
+
+            </script>
+
+</body>
