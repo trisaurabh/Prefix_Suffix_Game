@@ -7,3 +7,5 @@ This small game helps kids remember the correct spelling of words. The project i
 3. Go to the url 127.0.0.1:5000
 4. Follow the instructions to play the game.
 
+
+
